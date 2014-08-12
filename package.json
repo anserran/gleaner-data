@@ -1,0 +1,20 @@
+{
+    "author": "anserran <angelserranolaguna@gmail.com>",
+    "dependencies": {
+        "q": "1.0.1",
+        "easy-collections": "anserran/easy-collections"
+    },
+    "description": "REST API to access gleaner static data (game, versions, users...)",
+    "devDependencies": {
+        "nodeunit": ">0.0.0",
+        "mongodb": "1.4.8",
+        "supertest": "0.13.x",
+        "express": "4.8.x",
+        "body-parser": "1.6.3"
+    },
+    "name": "gleaner-data",
+    "scripts": {
+        "test": "nodeunit test/"
+    },
+    "version": "0.0.1"
+}
