@@ -11,6 +11,8 @@ var db;
 
 var games = require('../lib/games');
 var idCreated;
+var versionCreated;
+var first = true;
 
 module.exports = {
     setUp: function(callback) {
@@ -19,10 +21,20 @@ module.exports = {
                 console.log(err);
             }
             db = database;
-            app = express();
-            app.use(bodyParser.json());
-            games(db, app);
-            callback();
+            if (first) {
+                db.collection('games').remove(function() {
+                    app = express();
+                    app.use(bodyParser.json());
+                    games(db, app);
+                    callback();
+                });
+                first = false;
+            } else {
+                app = express();
+                app.use(bodyParser.json());
+                games(db, app);
+                callback();
+            }
         });
     },
     tearDown: function(callback) {
@@ -47,8 +59,8 @@ module.exports = {
                     if (err) {
                         test.ok(false, err.stack);
                     } else {
-                        test.strictEqual(res.body.length, 1);
-                        idCreated = res.body[0]._id;
+                        test.ok(res.body);
+                        idCreated = res.body._id;
                         test.ok(idCreated);
                     }
                     test.done();
@@ -105,8 +117,55 @@ module.exports = {
                     test.done();
                 });
         },
+        addVersion: function(test) {
+            test.expect(3);
+            req.post('/games/' + idCreated + '/versions')
+                .expect(200)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .end(function(err, res) {
+                    if (err) {
+                        test.ok(false, err.stack);
+                    } else {
+                        console.log(res.body);
+                        test.ok(res.body);
+                        versionCreated = res.body._id;
+                        test.ok(versionCreated);
+                        req.get('/games/' + idCreated + '/versions')
+                            .expect(200)
+                            .set('Accept', 'application/json')
+                            .expect('Content-Type', /json/)
+                            .end(function(err, res) {
+                                if (err) {
+                                    test.ok(false, err.stack);
+                                } else {
+                                    test.strictEqual(res.body.length, 1);
+                                }
+                                test.done();
+                            });
+                    }
+                });
+        },
+        versionUpdated: function(test) {
+            req.post('/games/' + idCreated + '/versions/' + versionCreated)
+                .expect(200)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .send({
+                    name: 'version'
+                }).end(function(err, res) {
+                    if (err) {
+                        test.ok(false, err.stack);
+                    } else {
+                        console.log(res.body);
+                        test.strictEqual(res.body._id, versionCreated);
+                        test.strictEqual(res.body.name, 'version');
+                    }
+                    test.done();
+                });
+        },
         deleteGame: function(test) {
-            test.expect(1);
+            test.expect(2);
             req.delete('/games/' + idCreated)
                 .expect(200)
                 .set('Accept', 'application/json')
@@ -117,8 +176,19 @@ module.exports = {
                     } else {
                         console.log(res.body);
                         test.ok(res.body);
+                        req.get('/games/' + idCreated + '/versions/' + versionCreated)
+                            .expect(200)
+                            .set('Accept', 'application/json')
+                            .end(function(err, res) {
+                                if (err) {
+                                    test.ok(false, err.stack);
+                                } else {
+                                    console.log(res.body);
+                                    test.ok(!res.body._id);
+                                }
+                                test.done();
+                            });
                     }
-                    test.done();
                 });
         }
     }
