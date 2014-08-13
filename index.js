@@ -1,1 +1,1 @@
-module.exports = require('./lib/games');
+module.exports = require('./lib/rest');

@@ -9,7 +9,7 @@ var app;
 var MongoClient = require('mongodb').MongoClient;
 var db;
 
-var games = require('../lib/games');
+var rest = require('../lib/rest');
 var idCreated;
 var versionCreated;
 var first = true;
@@ -25,14 +25,14 @@ module.exports = {
                 db.collection('games').remove(function() {
                     app = express();
                     app.use(bodyParser.json());
-                    games(db, app);
+                    rest(db, app);
                     callback();
                 });
                 first = false;
             } else {
                 app = express();
                 app.use(bodyParser.json());
-                games(db, app);
+                rest(db, app);
                 callback();
             }
         });
