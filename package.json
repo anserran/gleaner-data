@@ -10,6 +10,7 @@
         "mongodb": "1.4.8",
         "supertest": "0.13.x",
         "express": "4.8.x",
+        "express-session": "1.7.x",
         "body-parser": "1.6.3"
     },
     "name": "gleaner-data",

@@ -1,7 +1,8 @@
 module.exports = function() {
     var request = require('supertest'),
         express = require('express'),
-        bodyParser = require('body-parser');
+        bodyParser = require('body-parser'),
+        session = require('express-session');
 
 
     var app;
@@ -13,6 +14,9 @@ module.exports = function() {
     var first = true;
 
     var helper = {};
+    var options = {
+        redirectLogin: '/logged'
+    };
     return {
         helper: function() {
             return helper;
@@ -30,11 +34,15 @@ module.exports = function() {
                         console.log(err);
                     }
                     db = database;
+                    app = express();
+                    app.use(bodyParser.json());
+                    app.use(session({
+                        secret: 'secret'
+                    }));
+                    helper.app = app;
                     if (first) {
                         db.dropDatabase(function() {
-                            app = express();
-                            app.use(bodyParser.json());
-                            rest(db, app);
+                            rest(db, app, options);
                             helper.req = request(app);
                             if (helper.setUpExtra) {
                                 helper.setUpExtra(callback);
@@ -44,9 +52,7 @@ module.exports = function() {
                         });
                         first = false;
                     } else {
-                        app = express();
-                        app.use(bodyParser.json());
-                        rest(db, app);
+                        rest(db, app, options);
                         helper.req = request(app);
                         if (helper.setUpExtra) {
                             helper.setUpExtra(callback);
