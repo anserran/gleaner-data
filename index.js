@@ -1,1 +1,4 @@
-module.exports = require('./lib/rest');
+module.exports = {
+    rest: require('./lib/rest'),
+    users: require('./lib/users')
+};
