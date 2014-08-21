@@ -14,7 +14,7 @@
     },
     "name": "gleaner-data",
     "scripts": {
-        "test": "nodeunit test/"
+        "test": "nodeunit test/**-test.js"
     },
     "version": "0.0.1"
 }
