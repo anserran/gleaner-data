@@ -2,7 +2,9 @@
     "author": "anserran <angelserranolaguna@gmail.com>",
     "dependencies": {
         "q": "1.0.1",
-        "easy-collections": "anserran/easy-collections"
+        "easy-collections": "anserran/easy-collections",
+        "redis": "0.12.x",
+        "hiredis": "0.1.x"
     },
     "description": "REST API to access gleaner static data (game, versions, users...)",
     "devDependencies": {
@@ -11,9 +13,7 @@
         "supertest": "0.13.x",
         "express": "4.8.x",
         "express-session": "1.7.x",
-        "body-parser": "1.6.3",
-        "redis": "0.12.x",
-        "hiredis": "0.1.x"
+        "body-parser": "1.6.3"
     },
     "name": "gleaner-data",
     "scripts": {
