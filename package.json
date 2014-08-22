@@ -11,7 +11,9 @@
         "supertest": "0.13.x",
         "express": "4.8.x",
         "express-session": "1.7.x",
-        "body-parser": "1.6.3"
+        "body-parser": "1.6.3",
+        "redis": "0.12.x",
+        "hiredis": "0.1.x"
     },
     "name": "gleaner-data",
     "scripts": {
