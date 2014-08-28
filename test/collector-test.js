@@ -4,15 +4,15 @@ var helper = testHelper.helper();
 var client = require('../lib/analysis-queue').client;
 
 var versionId;
+var trackingCode;
 
 testHelper.setUp(function(callback) {
     helper.req.post('/games')
         .end(function(err, res) {
             helper.req.post('/games/' + res.body._id + '/versions')
-                .send({
-                    trackingCode: '000'
-                }).end(function(err, res) {
+                .end(function(err, res) {
                     console.log(res.body);
+                    trackingCode = res.body.trackingCode;
                     versionId = res.body._id;
                     callback();
                 });
@@ -21,7 +21,7 @@ testHelper.setUp(function(callback) {
 
 test.track = function(test) {
     test.expect(5);
-    helper.req.post('/start/000')
+    helper.req.post('/start/' + trackingCode)
         .expect(200)
         .set('Accept', 'application/json')
         .set('Authorization', 'a:')
