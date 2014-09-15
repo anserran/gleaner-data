@@ -60,4 +60,91 @@ test.track = function(test) {
         });
 };
 
+test.startEvent = function(test) {
+    var authToken;
+    test.expect(4);
+    helper.req.post('/start/' + trackingCode)
+        .expect(200)
+        .set('Accept', 'application/json')
+        .set('Authorization', 'a:')
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+            if (err) {
+                test.ok(false, err.stack);
+                test.done();
+            } else {
+                console.log(res.body);
+                test.ok(authToken = res.body.authToken);
+                test.ok(res.body.playerName);
+                helper.req.post('/track')
+                    .expect(200)
+                    .set('Authorization', authToken)
+                    .send([{
+                        event: 'start'
+                    }, {
+                        event: 'start'
+                    }, {
+                        event: 'start'
+                    }])
+                    .end(function(err, res) {
+                        if (err) {
+                            test.ok(false, err.stack);
+                        } else {
+                            console.log(res.body);
+                            test.ok(res.body === true);
+                        }
+                        checkGameplays(test, authToken);
+                    });
+            }
+        });
+};
+
+var checkGameplays = function(test, authToken) {
+    var authTokens = require('../lib/auth-tokens');
+    authTokens.find({
+        authToken: authToken
+    }, true).then(function(authToken) {
+        var Collection = require('easy-collections');
+        var gameplays = new Collection(require('../lib/db'), 'gameplays_' + authToken.versionId);
+        gameplays.find({
+            playerId: authToken.playerId
+        }).then(function(gameplays) {
+            test.strictEqual(4, gameplays.length);
+            test.done();
+        });
+    });
+};
+
+test.sessionsCount = function(test) {
+    test.expect(1);
+    helper.req.post('/start/' + trackingCode)
+        .set('Authorization', 'a:')
+        .end(function(err, res) {
+            var name = res.body.playerName;
+            if (err) {
+                test.ok(false, err.stack);
+            } else {
+                helper.req.post('/start/' + trackingCode)
+                    .set('Authorization', 'a:' + name)
+                    .end(function(err, res) {
+                        var authToken = res.body.authToken;
+                        var authTokens = require('../lib/auth-tokens');
+                        authTokens.find({
+                            authToken: authToken
+                        }, true).then(function(authToken) {
+                            var Collection = require('easy-collections');
+                            var gameplays = new Collection(require('../lib/db'), 'gameplays_' + authToken.versionId);
+                            gameplays.find({
+                                playerId: authToken.playerId
+                            }, true).then(function(gameplay) {
+                                test.strictEqual(2, gameplay.sessions);
+                                test.done();
+                            });
+                        });
+                    });
+            }
+        });
+};
+
+
 module.exports = test;
