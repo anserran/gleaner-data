@@ -14,7 +14,14 @@ module.exports = function() {
     var rest = require('../lib/rest');
     var first = true;
 
-    var helper = {};
+    var helper = {
+        testError: function(test, err){
+            if (err) {
+                test.ok(false, err.stack);
+                test.done();
+            }
+        }
+    };
     var options = {
         redirectLogin: '/logged'
     };
