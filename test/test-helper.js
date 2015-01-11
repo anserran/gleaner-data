@@ -8,7 +8,6 @@ module.exports = function() {
     var app;
 
     var MongoClient = require('mongodb').MongoClient;
-    var client = require('../lib/analysis-queue').client;
     var db;
 
     var rest = require('../lib/rest');
@@ -42,6 +41,7 @@ module.exports = function() {
                         console.log(err);
                     }
                     db = database;
+                    require('../lib/db').db = database;
                     app = express();
                     app.use(bodyParser.json());
                     app.use(session({
@@ -50,7 +50,7 @@ module.exports = function() {
                     helper.app = app;
                     if (first) {
                         db.dropDatabase(function() {
-                            rest(db, app, options);
+                            rest(app, options);
                             helper.req = request(app);
                             if (helper.setUpExtra) {
                                 helper.setUpExtra(callback);
@@ -60,7 +60,7 @@ module.exports = function() {
                         });
                         first = false;
                     } else {
-                        rest(db, app, options);
+                        rest(app, options);
                         helper.req = request(app);
                         if (helper.setUpExtra) {
                             helper.setUpExtra(callback);
@@ -72,8 +72,6 @@ module.exports = function() {
             },
             tearDown: function(callback) {
                 db.close();
-                client.del('q_realtime');
-                client.quit();
                 if (helper.tearDownExtra) {
                     helper.tearDownExtra(callback);
                 } else {

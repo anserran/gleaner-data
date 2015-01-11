@@ -3,8 +3,6 @@
     "dependencies": {
         "q": "1.0.1",
         "easy-collections": "anserran/easy-collections",
-        "redis": "0.12.x",
-        "hiredis": "0.1.x",
         "underscore": "*"
     },
     "description": "REST API to access gleaner static data (game, versions, users...)",
