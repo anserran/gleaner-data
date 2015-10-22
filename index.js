@@ -3,5 +3,5 @@ module.exports = {
     users: require('./lib/users'),
     db: require('./lib/db'),
     sessions: require('./lib/sessions'),
-    traces: require('./lib/traces')
+    traces: require('./lib/traces/traces')
 };

@@ -1,22 +1,24 @@
 {
-    "author": "anserran <angelserranolaguna@gmail.com>",
-    "dependencies": {
-        "q": "1.0.1",
-        "easy-collections": "anserran/easy-collections",
-        "underscore": "*"
-    },
-    "description": "REST API to access gleaner static data (game, versions, users...)",
-    "devDependencies": {
-        "nodeunit": ">0.0.0",
-        "mongodb": "1.4.8",
-        "supertest": "0.13.x",
-        "express": "4.8.x",
-        "express-session": "1.7.x",
-        "body-parser": "1.6.3"
-    },
-    "name": "gleaner-data",
-    "scripts": {
-        "test": "nodeunit test/**-test.js"
-    },
-    "version": "0.0.1"
+  "author": "anserran <angelserranolaguna@gmail.com>",
+  "dependencies": {
+    "q": "1.4.x",
+    "easy-collections": "anserran/easy-collections",
+    "underscore": "*",
+    "kafka-node": "0.2.x"
+  },
+  "description": "REST API to access gleaner static data (game, versions, users...)",
+  "devDependencies": {
+    "nodeunit": ">0.0.0",
+    "mongodb": "2.0.x",
+    "supertest": "0.13.x",
+    "express": "4.8.x",
+    "express-session": "1.7.x",
+    "body-parser": "1.6.3",
+    "concat-stream": "1.5.x"
+  },
+  "name": "gleaner-data",
+  "scripts": {
+    "test": "nodeunit test/**-test.js"
+  },
+  "version": "0.0.1"
 }
