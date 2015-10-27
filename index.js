@@ -1,7 +1,11 @@
 module.exports = {
-    rest: require('./lib/rest'),
     users: require('./lib/users'),
-    db: require('./lib/db'),
     sessions: require('./lib/sessions'),
-    traces: require('./lib/traces/traces')
+    traces: require('./lib/traces/traces'),
+    data: function (db, app, options) {
+        require('./lib/db').db.setDB(db);
+        if (app){
+            require('./lib/rest')(app, options);
+        }
+    }
 };
