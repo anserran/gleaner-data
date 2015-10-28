@@ -1,4 +1,4 @@
-var restHelper = require('./rest-helper')();
+var restHelper = require('../rest-helper')();
 var test = module.exports = restHelper.test;
 
 test.testAdmin = function (test) {

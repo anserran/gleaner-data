@@ -91,13 +91,14 @@ module.exports = function () {
                 callback();
             }
         },
-        role: function (role) {
+        role: function (role, resources) {
             var deferred = Q.defer();
             var user = request.agent(app);
             var credentials = {
                 name: role,
                 password: role,
-                role: role
+                role: role,
+                resources: resources
             };
 
             var users = require('../lib/users').collection();
