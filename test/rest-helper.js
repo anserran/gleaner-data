@@ -13,7 +13,32 @@ module.exports = function () {
     var app;
 
     var initTest = function (app, callback) {
-        rest(app, {loginPath: '/login', apiRoot: '/api/', collectorRoot: '/collect/'});
+        rest(app, {
+                loginPath: '/login',
+                apiRoot: '/api/',
+                collectorRoot: '/collect/',
+                roles: {
+                    admin: true,
+                    developer: {
+                        games: {
+                            create: -1,
+                            read: 'owner',
+                            update: 'owner',
+                            delete: 'owner'
+                        }
+                    },
+                    limited: {
+                        games: {
+                            create: 1,
+                            read: 'owner',
+                            update: 'owner',
+                            delete: 'owner'
+                        }
+                    }
+                }
+            }
+        )
+        ;
         callback();
     };
 
@@ -91,14 +116,13 @@ module.exports = function () {
                 callback();
             }
         },
-        role: function (role, resources) {
+        role: function (role) {
             var deferred = Q.defer();
             var user = request.agent(app);
             var credentials = {
                 name: role,
                 password: role,
-                role: role,
-                resources: resources
+                role: role
             };
 
             var users = require('../lib/users').collection();
@@ -132,4 +156,5 @@ module.exports = function () {
             });
         }
     };
-};
+}
+;

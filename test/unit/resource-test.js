@@ -5,7 +5,7 @@ var test = module.exports = restHelper.test;
 test.testResourceAvailability = function (test) {
     test.expect(3);
     var gameId;
-    restHelper.role('developer', {games: {total: 1, used: 0}})
+    restHelper.role('limited')
         .then(function (resource) {
             resource.post('/api/games', {title: 'A game'})
                 .then(function (game) {
