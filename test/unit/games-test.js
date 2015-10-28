@@ -3,7 +3,7 @@ var test = module.exports = restHelper.test;
 
 test.testAdmin = function(test){
     var gameId;
-    test.expect(10);
+    test.expect(9);
     restHelper.role('admin').then(function (resource) {
         resource.post('/api/games', {title: 'A game'})
             .then(function (result) {
@@ -21,9 +21,6 @@ test.testAdmin = function(test){
                 return resource.get('/api/games/' + gameId);
             }).then(function (result) {
                 test.strictEqual(result._id, gameId);
-                return resource.post('/api/games/' + gameId + '/versions', {name: 'v1'});
-            }).then(function (result) {
-                test.strictEqual(result.gameId, gameId);
                 test.ok(result.trackingCode);
                 return resource.delete('/api/games/' + gameId)
             }).then(function (result) {

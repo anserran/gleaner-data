@@ -149,9 +149,7 @@ module.exports = function () {
         trackingCode: function () {
             return this.role('admin').then(function (resource) {
                 return resource.post('/api/games', {title: 'Title'}).then(function (game) {
-                    return resource.post('/api/games/' + game._id + '/versions');
-                }).then(function (version) {
-                    return version.trackingCode;
+                    return game.trackingCode;
                 });
             });
         }
