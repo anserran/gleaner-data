@@ -8,6 +8,7 @@ module.exports = {
         if (options && options.kafka) {
             var traces = require('./lib/traces/traces');
             var kafka = require('./lib/traces/kafka-consumer')(options.kafka);
+            traces.addConsumer(kafka);
         }
     }
 };
