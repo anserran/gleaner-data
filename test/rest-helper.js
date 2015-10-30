@@ -34,6 +34,9 @@ module.exports = function () {
                             update: 'owner',
                             delete: 'owner'
                         }
+                    },
+                    player: {
+                        players: true
                     }
                 }
             }
@@ -112,8 +115,10 @@ module.exports = function () {
                 });
             },
             tearDown: function (callback) {
-                db.db.close();
-                callback();
+                db.db.dropDatabase(function () {
+                    db.db.close();
+                    callback();
+                });
             }
         },
         role: function (role) {
@@ -126,21 +131,24 @@ module.exports = function () {
             };
 
             var users = require('../lib/users').collection();
-            users.insert(credentials).then(function () {
-                user.post('/login')
-                    .send({
-                        name: role,
-                        password: role,
-                        role: role
-                    }).end(function (err, res) {
-                        if (err) {
-                            deferred.reject(err);
-                        } else {
-                            deferred.resolve(new Request(user));
-                        }
-                    });
+            users.insert(credentials)
+                .then(function () {
+                    user.post('/login')
+                        .send({
+                            name: role,
+                            password: role,
+                            role: role
+                        }).end(function (err, res) {
+                            if (err) {
+                                deferred.reject(err);
+                            } else {
+                                deferred.resolve(new Request(user));
+                            }
+                        });
 
-            });
+                }).fail(function (err) {
+                    deferred.reject(err);
+                });
             return deferred.promise;
         },
         request: function () {
