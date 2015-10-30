@@ -12,6 +12,12 @@ module.exports = function () {
     var first = true;
     var app;
 
+    var owner = {
+        where: {
+            owner: '$user'
+        }
+    };
+
     var initTest = function (app, callback) {
         rest(app, {
                 loginPath: '/login',
@@ -22,17 +28,22 @@ module.exports = function () {
                     developer: {
                         games: {
                             create: -1,
-                            read: 'owner',
-                            update: 'owner',
-                            delete: 'owner'
+                            read: owner,
+                            update: owner,
+                            delete: owner
                         }
                     },
                     limited: {
                         games: {
                             create: 1,
-                            read: 'owner',
-                            update: 'owner',
-                            delete: 'owner'
+                            read: owner,
+                            update: {
+                                where: {
+                                    owner: '$user'
+                                },
+                                exclude: ['owner']
+                            },
+                            delete: owner
                         }
                     },
                     player: {

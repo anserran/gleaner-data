@@ -3,7 +3,7 @@ var test = module.exports = restHelper.test;
 
 
 test.testResourceAvailability = function (test) {
-    test.expect(3);
+    test.expect(4);
     var gameId;
     restHelper.role('limited')
         .then(function (resource) {
@@ -21,8 +21,9 @@ test.testResourceAvailability = function (test) {
                     return resource.post('/api/games', {title: 'Game 3'});
                 }).then(function (game) {
                     test.strictEqual(game.title, 'Game 3');
+                    return resource.post('/api/games/' + gameId, {owner: 'New owner'});
                 }).fail(function (err) {
-                    test.ok(false, err);
+                    test.strictEqual(err.status, 400);
                 }).then(function () {
                     test.done();
                 });
