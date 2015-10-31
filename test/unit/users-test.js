@@ -51,3 +51,32 @@ test.testDeveloper = function (test) {
             });
     });
 };
+
+test.testChangePassword = function (test) {
+    test.expect(5);
+
+    restHelper.role('admin').then(function (r) {
+        var adminId = r.user._id;
+        restHelper.role('change').then(function (resource) {
+            var id = resource.user._id;
+            return resource.post('/api/users/' + adminId, {nickname: 'Ñor'})
+                .fail(function (err) {
+                    test.strictEqual(err.status, 401);
+                    return resource.post('/api/users/' + id, {nickname: 'Bob'});
+                }).then(function (result) {
+                    test.strictEqual(result._id, id.toString());
+                    test.strictEqual(result.nickname, 'Bob');
+                    return resource.post('/api/users/' + id, {password: 'newpassword'});
+                }).fail(function (err) {
+                    test.strictEqual(err.status, 400);
+                    return resource.post('/api/users/' + id, {password: 'newpassword', oldPassword: 'change'});
+                }).then(function (result) {
+                    test.ok(result);
+                });
+        }).fail(function (err) {
+            console.log(err);
+        }).then(function () {
+            test.done();
+        });
+    });
+};

@@ -17,6 +17,20 @@ test.testRestGet = function (test) {
                     });
                 }).then(function (assessments) {
                     test.strictEqual(1, assessments.length);
+                    restHelper.request().post('/login')
+                        .send({
+                            name: 'change',
+                            password: 'newpassword',
+                        })
+                        .end(function (err, res) {
+                            if (err) {
+                                deferred.reject(err);
+                            } else {
+                                var req = new Request(user);
+                                req.user = u;
+                                deferred.resolve(req);
+                            }
+                        });
                 }).fail(function (err) {
                     console.log(err);
                 }).then(function () {

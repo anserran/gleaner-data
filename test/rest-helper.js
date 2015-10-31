@@ -1,4 +1,50 @@
 module.exports = function () {
+    var conf = require('../lib/configuration');
+
+    var owner = {
+        where: {
+            owner: '$user'
+        }
+    };
+
+    conf.roles = {
+        admin: true,
+        developer: {
+            games: {
+                create: -1,
+                read: owner,
+                update: owner,
+                delete: owner
+            }
+        },
+        limited: {
+            games: {
+                create: 1,
+                read: owner,
+                update: {
+                    where: {
+                        owner: '$user'
+                    },
+                    exclude: ['owner']
+                },
+                delete: owner
+            }
+        },
+        player: {
+            players: true
+        },
+        change: {
+            users: {
+                read: true,
+                update: {
+                    where: {
+                        _id: '$user'
+                    }
+                }
+            }
+        }
+    };
+
     var Q = require('q'),
         request = require('supertest'),
         express = require('express'),
@@ -12,44 +58,12 @@ module.exports = function () {
     var first = true;
     var app;
 
-    var owner = {
-        where: {
-            owner: '$user'
-        }
-    };
 
     var initTest = function (app, callback) {
         rest(app, {
                 loginPath: '/login',
                 apiRoot: '/api/',
-                collectorRoot: '/collect/',
-                roles: {
-                    admin: true,
-                    developer: {
-                        games: {
-                            create: -1,
-                            read: owner,
-                            update: owner,
-                            delete: owner
-                        }
-                    },
-                    limited: {
-                        games: {
-                            create: 1,
-                            read: owner,
-                            update: {
-                                where: {
-                                    owner: '$user'
-                                },
-                                exclude: ['owner']
-                            },
-                            delete: owner
-                        }
-                    },
-                    player: {
-                        players: true
-                    }
-                }
+                collectorRoot: '/collect/'
             }
         )
         ;
@@ -143,7 +157,7 @@ module.exports = function () {
 
             var users = require('../lib/users').collection();
             users.insert(credentials)
-                .then(function () {
+                .then(function (u) {
                     user.post('/login')
                         .send({
                             name: role,
@@ -153,7 +167,9 @@ module.exports = function () {
                             if (err) {
                                 deferred.reject(err);
                             } else {
-                                deferred.resolve(new Request(user));
+                                var req = new Request(user);
+                                req.user = u;
+                                deferred.resolve(req);
                             }
                         });
 
@@ -167,7 +183,7 @@ module.exports = function () {
         },
         trackingCode: function () {
             return this.role('admin').then(function (resource) {
-                return resource.post('/api/games', {title: 'Title'}).then(function (game) {
+                return resource.post('/api/games', {name: 'Title'}).then(function (game) {
                     return game.trackingCode;
                 });
             });
