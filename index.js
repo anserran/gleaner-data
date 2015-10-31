@@ -18,5 +18,6 @@ module.exports = {
             var kafka = require('./lib/traces/kafka-consumer')(options.kafka);
             traces.addConsumer(kafka);
         }
+        return users;
     }
 };
