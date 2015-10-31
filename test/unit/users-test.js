@@ -53,7 +53,7 @@ test.testDeveloper = function (test) {
 };
 
 test.testChangePassword = function (test) {
-    test.expect(5);
+    test.expect(6);
 
     restHelper.role('admin').then(function (r) {
         var adminId = r.user._id;
@@ -67,6 +67,9 @@ test.testChangePassword = function (test) {
                     test.strictEqual(result._id, id.toString());
                     test.strictEqual(result.nickname, 'Bob');
                     return resource.post('/api/users/' + id, {password: 'newpassword'});
+                }).fail(function (err) {
+                    test.strictEqual(err.status, 400);
+                    return resource.post('/api/users/' + id, {password: ''});
                 }).fail(function (err) {
                     test.strictEqual(err.status, 400);
                     return resource.post('/api/users/' + id, {password: 'newpassword', oldPassword: 'change'});
